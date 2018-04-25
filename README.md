@@ -12,5 +12,5 @@ Sistema Fictício de Troca de Livros para a Disciplina de DSOO II - UFSC/2018.1
 
 #### Plataforma
 
-- Java EE 8
+- Java EE 7
 - Glassfish 4.1.1
