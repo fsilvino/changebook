@@ -66,11 +66,11 @@ public class Usuario implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "TELEFONE")
     private String telefone;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuario")
     private List<Livro> livroList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuarioDestinatario")
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuarioDestinatario")
     private List<Mensagem> mensagensComoDestinatario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuarioRemetente")
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuarioRemetente")
     private List<Mensagem> mensagensComoRemetente;
 
     public Usuario() {
