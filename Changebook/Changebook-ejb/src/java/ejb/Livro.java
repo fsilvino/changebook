@@ -64,7 +64,7 @@ public class Livro implements Serializable {
     @JoinColumn(name = "IDUSUARIO", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Usuario usuario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "livro")
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "livro")
     private List<Mensagem> mensagemList;
 
     public Livro() {
