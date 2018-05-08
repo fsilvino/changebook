@@ -18,18 +18,18 @@ import javax.persistence.Query;
  */
 @Stateless
 @LocalBean
-public class UsuarioFechada {
+public class MensagemFachada {
 
     @PersistenceContext(unitName = "Changebook-ejbPU")
     private EntityManager em;
     
-    public void persist(Usuario usuario) {
-        em.persist(usuario);
+    public void persist(Mensagem mensagem) {
+        em.persist(mensagem);
     }
     
     // Metodo que retorna a lista de clientes armazenada na tabela Clientes
-    public List<Usuario> getListaUsuarios() {
-        Query query = em.createNamedQuery("Usuario.findAll");
+    public List<Mensagem> getListaMensagens() {
+        Query query = em.createNamedQuery("Mensagem.findAll");
         return query.getResultList();
     }
     

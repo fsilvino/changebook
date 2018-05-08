@@ -8,9 +8,29 @@
         <title>Changebook</title>
     </h:head>
     <h:body>
+        
         <f:view>
             <h1><h:outputText value="Lista de Livros"/></h1>
-            <p:commandButton type="button" value="Novo Livro" onclick="PF('dlgCadLivro').show();" />
+            <h:form>
+                <p:commandButton type="button" value="Novo Livro" onclick="PF('dlgCadLivro').show();" />
+                <p:commandButton type="button" value="Login" onclick="PF('dlgLogin').show();" />
+                <p:commandButton type="button" value="Cadastre-se" onclick="PF('dlgCadastroUsuario').show();" />
+            </h:form>
+            
+            <p:dialog header="Login" modal="true" widgetVar="dlgLogin">
+                <h:form>
+                    <p:growl id="growlLogin" showDetail="true" sticky="true" />
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="email" value="E-mail:" />
+                        <p:inputText id="email" value="#{loginMBean.email}" required="true" />
+                        
+                        <p:outputLabel for="senha" value="Senha:" />
+                        <p:password id="senha" value="#{loginMBean.senha}" />
+                    </p:panelGrid>
+                    <p:commandButton value="Login" actionListener="#{loginMBean.login}" update="growlLogin" />
+                </h:form>
+            </p:dialog>
+            
             <p:dialog header="Cadastro de Livro" modal="true" widgetVar="dlgCadLivro">
                 <h:form>
                     <div class="row">
@@ -21,6 +41,28 @@
                     </div>
                 </h:form>
             </p:dialog>
+            
+            <p:dialog header="Cadastro de Usuário" modal="true" widgetVar="dlgCadastroUsuario">
+                <h:form>
+                    <p:growl id="growlUsuario" showDetail="true" sticky="true" />
+                    
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="nome" value="Nome:" />
+                        <p:inputText id="nome" value="#{cadastroUsuarioMBean.nome}" required="true" />
+                        
+                        <p:outputLabel for="telefone" value="Telefone:" />
+                        <p:inputText id="telefone" value="#{cadastroUsuarioMBean.telefone}" required="true" />
+                        
+                        <p:outputLabel for="email" value="E-mail:" />
+                        <p:inputText id="email" value="#{cadastroUsuarioMBean.email}" required="true" />
+                        
+                        <p:outputLabel for="senha" value="Senha:" />
+                        <p:password id="senha" value="#{cadastroUsuarioMBean.senha}" />
+                    </p:panelGrid>
+                    <p:commandButton value="Cadastrar" actionListener="#{cadastroUsuarioMBean.cadastrar}" update="growlUsuario" />
+                </h:form>
+            </p:dialog>
+            
             <h:form>
                 <p:dataTable var="livro" value="#{livroMBean.listaLivros}">
                     <p:column headerText="Id">
