@@ -14,6 +14,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import java.util.List;
 
 /**
  *
@@ -26,7 +27,7 @@ public class CadastroUsuarioMBean implements Serializable {
     @EJB
     private UsuarioFachada usuarioFachada;
     
-    @ManagedProperty(value = "usuarioMBean")
+    @ManagedProperty(value = "#{usuarioMBean}")
     private UsuarioMBean usuarioMBean;
     
     private String nome;
@@ -75,6 +76,12 @@ public class CadastroUsuarioMBean implements Serializable {
     
     public boolean cadastrar() {
         
+        FacesContext context = FacesContext.getCurrentInstance();
+        
+        List<FacesMessage> messageList = context.getMessageList();
+        if (!messageList.isEmpty()) { 
+            messageList.clear();
+        }
         if (!validarCadastro()) {
             return false;
         }
@@ -84,13 +91,16 @@ public class CadastroUsuarioMBean implements Serializable {
         usuario.setTelefone(telefone);
         usuario.setEmail(email);
         usuario.setSenha(senha);
+        try {
+            usuarioFachada.persist(usuario);
+            usuarioMBean.setUsuario(usuario);
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Cadastro realizado com sucesso!"));
+            return true;
+        } catch (Exception e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", e.getMessage()));
+            return false;
+        }
         
-        usuarioFachada.persist(usuario);
-        usuarioMBean.setUsuario(usuario);
-        
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Cadastro realizado com sucesso!"));
-        
-        return true;
     }
     
     private boolean validarCadastro() {
@@ -99,7 +109,7 @@ public class CadastroUsuarioMBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         if (nome == null || nome.isEmpty()) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "O campo Nome é obrigatório!"));
-            valido = false;
+            return false;
         }
         
         if (telefone == null || telefone.isEmpty()) {

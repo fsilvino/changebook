@@ -41,38 +41,47 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "NOME")
     private String nome;
-    @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="E-mail inválido")
+    
+    //@Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="E-mail inválido")
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "EMAIL")
     private String email;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "SENHA")
     private String senha;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "TELEFONE")
     private String telefone;
+    
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuario")
     private List<Livro> livroList;
+    
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuarioDestinatario")
     private List<Mensagem> mensagensComoDestinatario;
+    
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuarioRemetente")
     private List<Mensagem> mensagensComoRemetente;
+    
 
     public Usuario() {
     }
