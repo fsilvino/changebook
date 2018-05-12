@@ -1,7 +1,7 @@
-Mon May 07 23:10:50 BRT 2018 : Apache Derby Servidor de Rede - 10.10.2.0 - (1582446) iniciado e pronto para aceitar conexões na porta 1527 em {3}
+Sat May 12 15:58:23 BRT 2018 : Apache Derby Servidor de Rede - 10.10.2.0 - (1582446) iniciado e pronto para aceitar conexões na porta 1527 em {3}
 ----------------------------------------------------------------
-Mon May 07 23:11:43 BRT 2018:
- Inicializando o Derby versão The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instância a816c00e-0163-3d83-ea18-ffffd689d691
+Sat May 12 15:59:14 BRT 2018:
+ Inicializando o Derby versão The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instância a816c00e-0163-55b7-cc6c-ffffd689d691
 no diretório de banco de dados C:\GitHub\changebook\bd\changebook 
 
 java.vendor=Oracle Corporation
@@ -13,4 +13,4 @@ os.version=10.0
 derby.system.home=C:\GitHub\changebook\bd
 Carregador de classe do banco de dados iniciado - derby.database.classpath=''
 ----------------------------------------------------------------
-Mon May 07 23:58:16 BRT 2018: Shutting down Derby engine
+Sat May 12 18:22:27 BRT 2018: Shutting down Derby engine

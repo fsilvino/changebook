@@ -16,6 +16,7 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.util.List;
 import javax.inject.Inject;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -96,6 +97,9 @@ public class CadastroUsuarioMBean implements Serializable {
             usuarioFachada.persist(usuario);
             usuarioMBean.setUsuario(usuario);
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Cadastro realizado com sucesso!"));
+            
+            RequestContext.getCurrentInstance().execute("zeraEFechaCadastroUsuario()");
+            
             return true;
         } catch (Exception e) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", e.getMessage()));
