@@ -11,15 +11,16 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
 
+
 /**
  *
  * @author Flávio
  */
 @Named(value = "usuarioMBean")
-@ManagedBean
+@ManagedBean(name = "usuarioMBean")
 @SessionScoped
 public class UsuarioMBean implements Serializable {
-
+    
     private Usuario usuario;
     
     /**
@@ -32,7 +33,7 @@ public class UsuarioMBean implements Serializable {
     public Usuario getUsuario() {
         return usuario;
     }
-
+    
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }

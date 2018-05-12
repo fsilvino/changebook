@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.util.List;
+import javax.inject.Inject;
 
 /**
  *
@@ -27,8 +28,8 @@ public class CadastroUsuarioMBean implements Serializable {
     @EJB
     private UsuarioFachada usuarioFachada;
     
-    @ManagedProperty(value = "#{usuarioMBean}")
-    private UsuarioMBean usuarioMBean;
+    //@ManagedProperty(value = "usuarioMBean")
+    @Inject private UsuarioMBean usuarioMBean;
     
     private String nome;
     private String email;
