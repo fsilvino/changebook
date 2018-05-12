@@ -11,17 +11,20 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.view.ViewScoped;
 
 /**
  *
  * @author Flávio
  */
 @Named(value = "livroMBean")
-@RequestScoped
+@ViewScoped
 public class LivroMBean {
 
     @EJB
     private LivroFachada livroFachada;
+    
+    private Livro livro;
 
     /**
      * Creates a new instance of LivroMBean

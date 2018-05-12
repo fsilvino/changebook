@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <title>Changebook</title>
     </h:head>
@@ -12,18 +13,51 @@
         <f:view>
             <h1><h:outputText value="Lista de Livros"/></h1>
             <h:form>
-                <p:commandButton type="button" value="Novo Livro" onclick="PF('dlgCadLivro').show();" />
-                <p:commandButton type="button" value="Login" onclick="PF('dlgLogin').show();" />
-                <p:commandButton type="button" value="Cadastre-se" onclick="PF('dlgCadastroUsuario').show();" />
+                <table>
+                    <tr>
+                        <td>
+                            <p:fragment autoUpdate="true" id="fragmentLoginStatus">
+                                <c:choose>
+                                    <c:when test="${usuarioMBean.logado}">
+                                        <p:commandButton type="button" value="Novo Livro" onclick="PF('dlgCadLivro').show();" />
+                                        Olá 
+                                        <b>
+                                            <p:outputLabel value="#{usuarioMBean.usuario.nome} " />
+                                        </b>
+                                        <p:commandLink value="Logout" actionListener="#{loginMBean.logout}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <p:commandButton type="button" value="Login" onclick="PF('dlgLogin').show();" />
+                                        <p:commandButton type="button" value="Cadastre-se" onclick="PF('dlgCadastroUsuario').show();" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </p:fragment>
+                        </td>
+                    </tr>
+                </table>
             </h:form>
+            
+            <p:dialog header="Cadastro de Livro" modal="true" widgetVar="dlgCadLivro">
+                <h:form>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Títutlo" for="edTituloLivro" />
+                        <p:inputText widgetVar="edTituloLivro" />
+                        
+                        <p:outputLabel value="Sinopse" for="mmSinopseLivro" />
+                        <p:inputTextarea widgetVar="mmSinopseLivro" />
+                        
+                        <p:commandButton value="Cadastrar" actionListener="#{livroMBean.cadastrar}" />
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
             
             <p:dialog header="Login" modal="true" widgetVar="dlgLogin">
                 <h:form>
-                    <p:messages id="messagesLogin" showDetail="true" />
+                    <p:messages id="messagesLogin" showDetail="true" class="loginUpdate" />
                     <p:panelGrid columns="2">
                         <p:outputLabel for="email" value="E-mail:" />
                         <p:inputText id="email" value="#{loginMBean.email}" required="true" />
-                        
+
                         <p:outputLabel for="senha" value="Senha:" />
                         <p:password id="senha" value="#{loginMBean.senha}" />
                     </p:panelGrid>
@@ -31,19 +65,8 @@
                 </h:form>
             </p:dialog>
             
-            <p:dialog header="Cadastro de Livro" modal="true" widgetVar="dlgCadLivro">
-                <h:form>
-                    <div class="row">
-                        <label class="control-label">
-                            Títutlo:
-                        </label>
-                        <p:inputText widgetVar="edTituloLivro" />
-                    </div>
-                </h:form>
-            </p:dialog>
-            
             <p:dialog header="Cadastro de Usuário" modal="true" widgetVar="dlgCadastroUsuario">
-                <h:form>
+                <h:form id="fmCadUser">
                     <p:messages id="messagesCadUser" showDetail="true" />
                     
                     <p:panelGrid columns="2">
@@ -77,6 +100,15 @@
                 </p:dataTable>
             </h:form>
         </f:view>
+        
+        <script type="text/javascript">
+            function zeraEFechaCadastroUsuario() {
+                document.getElementById('fmCadUser').reset();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            }
+        </script>
         
     </h:body>
 </html>

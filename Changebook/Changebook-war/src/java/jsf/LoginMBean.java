@@ -15,6 +15,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 
@@ -29,7 +30,7 @@ public class LoginMBean implements Serializable {
     @EJB
     private UsuarioFachada usuarioFachada;
     
-    @ManagedProperty(value = "#{usuarioMBean}")
+    @Inject
     private UsuarioMBean usuarioMBean;
     
     private String email;
@@ -73,8 +74,22 @@ public class LoginMBean implements Serializable {
         }
         
         usuarioMBean.setUsuario(user);
+        RequestContext.getCurrentInstance().execute("window.location.reload()");
         
         return true;
+    }
+    
+    public void logout() {
+        this.email = "";
+        this.senha = "";
+        usuarioMBean.setUsuario(null);
+    }
+    
+    public String getNomeUsuarioLogado() {
+        if (usuarioMBean.getUsuario() != null) {
+            return usuarioMBean.getUsuario().getNome();
+        }
+        return "";
     }
     
 }
