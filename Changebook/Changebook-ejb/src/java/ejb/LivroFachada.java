@@ -27,9 +27,20 @@ public class LivroFachada {
         em.persist(livro);
     }
     
-    // Metodo que retorna a lista de clientes armazenada na tabela Clientes
+    public void remove(Livro livro) {
+        em.remove(livro);
+    }
+    
+    // Metodo que retorna a lista de livros armazenada na tabela Livros
     public List<ejb.Livro> getListaLivros() {
         Query query = em.createNamedQuery("Livro.findAll");
+        return query.getResultList();
+    }
+    
+    // Metodo que retorn a lista de livros de determinado usuario
+    public List<ejb.Livro> getListaLivrosUsuario(Usuario usuario) {
+        Query query = em.createNamedQuery("Livro.findByProprietario");
+        query.setParameter("usuario", usuario);
         return query.getResultList();
     }
     
