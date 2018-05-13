@@ -27,9 +27,16 @@ public class MensagemFachada {
         em.persist(mensagem);
     }
     
-    // Metodo que retorna a lista de clientes armazenada na tabela Clientes
+    // Metodo que retorna a lista de mensagens armazenada na tabela Mensagens
     public List<Mensagem> getListaMensagens() {
         Query query = em.createNamedQuery("Mensagem.findAll");
+        return query.getResultList();
+    }
+    
+    // Metodo que retorna as mensagens em que o usuario @param é destinatario 
+    public List<ejb.Mensagem> getListaMensagensUsuario(Usuario usuario) {
+        Query query = em.createNamedQuery("Mensagem.findByDestinatario");
+        query.setParameter("usuario", usuario);
         return query.getResultList();
     }
     

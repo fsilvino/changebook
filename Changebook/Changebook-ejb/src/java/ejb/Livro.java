@@ -37,7 +37,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Livro.findById", query = "SELECT l FROM Livro l WHERE l.id = :id")
     , @NamedQuery(name = "Livro.findByTitulo", query = "SELECT l FROM Livro l WHERE l.titulo = :titulo")
     , @NamedQuery(name = "Livro.findBySinopse", query = "SELECT l FROM Livro l WHERE l.sinopse = :sinopse")
-    , @NamedQuery(name = "Livro.findByAutor", query = "SELECT l FROM Livro l WHERE l.autor = :autor")})
+    , @NamedQuery(name = "Livro.findByAutor", query = "SELECT l FROM Livro l WHERE l.autor = :autor")
+    , @NamedQuery(name = "Livro.findByProprietario", query = "SELECT l FROM Livro l WHERE l.usuario = :usuario")})
 public class Livro implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,24 +47,29 @@ public class Livro implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "TITULO")
     private String titulo;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 3000)
     @Column(name = "SINOPSE")
     private String sinopse;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "AUTOR")
     private String autor;
+    
     @JoinColumn(name = "IDUSUARIO", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Usuario usuario;
+    
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "livro")
     private List<Mensagem> mensagemList;
 
