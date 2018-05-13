@@ -83,6 +83,7 @@ public class LoginMBean implements Serializable {
         this.email = "";
         this.senha = "";
         usuarioMBean.setUsuario(null);
+        RequestContext.getCurrentInstance().execute("window.location.reload()");
     }
     
     public String getNomeUsuarioLogado() {

@@ -6,12 +6,13 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
+        <link rel="shotcut icon" href="Imagens/favicon.ico" />
         <title>Changebook</title>
     </h:head>
     <h:body>
         
         <f:view>
-            <h1><h:outputText value="Lista de Livros"/></h1>
+            <h1><h:outputText value="CHANGEBOOK"/></h1>
             <h:form>
                 <table>
                     <tr>
@@ -24,7 +25,7 @@
                                         <b>
                                             <p:outputLabel value="#{usuarioMBean.usuario.nome} " />
                                         </b>
-                                        <p:commandLink value="Logout" actionListener="#{loginMBean.logout}" />
+                                        <p:commandLink value="Logout" actionListener="#{loginMBean.logout}"/>
                                     </c:when>
                                     <c:otherwise>
                                         <p:commandButton type="button" value="Login" onclick="PF('dlgLogin').show();" />
@@ -37,29 +38,15 @@
                 </table>
             </h:form>
             
-            <p:dialog header="Cadastro de Livro" modal="true" widgetVar="dlgCadLivro">
-                <h:form>
-                    <p:panelGrid columns="2">
-                        <p:outputLabel value="Títutlo" for="edTituloLivro" />
-                        <p:inputText widgetVar="edTituloLivro" />
-                        
-                        <p:outputLabel value="Sinopse" for="mmSinopseLivro" />
-                        <p:inputTextarea widgetVar="mmSinopseLivro" />
-                        
-                        <p:commandButton value="Cadastrar" actionListener="#{livroMBean.cadastrar}" />
-                    </p:panelGrid>
-                </h:form>
-            </p:dialog>
-            
             <p:dialog header="Login" modal="true" widgetVar="dlgLogin">
                 <h:form>
                     <p:messages id="messagesLogin" showDetail="true" class="loginUpdate" />
                     <p:panelGrid columns="2">
-                        <p:outputLabel for="email" value="E-mail:" />
+                        <p:outputLabel for="email" value="E-mail : " />
                         <p:inputText id="email" value="#{loginMBean.email}" required="true" />
 
-                        <p:outputLabel for="senha" value="Senha:" />
-                        <p:password id="senha" value="#{loginMBean.senha}" />
+                        <p:outputLabel for="senha" value="Senha : " />
+                        <p:password id="senha" value="#{loginMBean.senha}" required="true" />
                     </p:panelGrid>
                     <p:commandButton value="Login" actionListener="#{loginMBean.login}" update="messagesLogin" />
                 </h:form>
@@ -70,34 +57,131 @@
                     <p:messages id="messagesCadUser" showDetail="true" />
                     
                     <p:panelGrid columns="2">
-                        <p:outputLabel for="nome" value="Nome:" />
+                        <p:outputLabel for="nome" value="Nome : " />
                         <p:inputText id="nome" value="#{cadastroUsuarioMBean.nome}" required="true" />
                         
-                        <p:outputLabel for="telefone" value="Telefone:" />
+                        <p:outputLabel for="telefone" value="Telefone : " />
                         <p:inputText id="telefone" value="#{cadastroUsuarioMBean.telefone}" required="true" />
                         
-                        <p:outputLabel for="email" value="E-mail:" />
+                        <p:outputLabel for="email" value="E-mail :" />
                         <p:inputText id="email" value="#{cadastroUsuarioMBean.email}" required="true"/>
                         
-                        <p:outputLabel for="senha" value="Senha:" />
-                        <p:password id="senha" value="#{cadastroUsuarioMBean.senha}" />
+                        <p:outputLabel for="senha" value="Senha :" />
+                        <p:password id="senha" value="#{cadastroUsuarioMBean.senha}" required="true"/>
                     </p:panelGrid>
                     <p:commandButton value="Cadastrar" actionListener="#{cadastroUsuarioMBean.cadastrar}" update="messagesCadUser" />
                 </h:form>
             </p:dialog>
             
-            <h:form>
-                <p:dataTable var="livro" value="#{livroMBean.listaLivros}">
-                    <p:column headerText="Id">
-                        <h:outputText value="#{livro.id}" />
-                    </p:column>
-                    <p:column headerText="Titulo">
-                        <h:outputText value="#{livro.titulo}" />
-                    </p:column>
-                    <p:column headerText="Usuário">
-                        <h:outputText value="#{livro.usuario}" />
-                    </p:column>
-                </p:dataTable>
+            <h:form id="fcaixaMensagens" rendered="${usuarioMBean.logado}">
+                <p:panel header="Caixa de mensagens" style="margin-bottom:20px" toggleable="true">
+                    <p:dataTable value="#{MensagensMBean.listaMensagensUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
+ 
+                        <p:column headerText="Remetente">
+                            <h:outputText value="#{msg.remetente.nome}" />
+                        </p:column>
+ 
+                        <p:column headerText="Conteúdo">
+                            <h:outputText value="#{msg.texto}" />
+                        </p:column>
+                        
+                        <p:column headerText="Livro">
+                            <h:outputText value="#{msg.livro.id}" />
+                        </p:column>
+                        
+                        <p:column style="text-align: center">
+                            <p:commandButton icon="ui-icon-zoomin" title="Ler Mensagem" />
+                        </p:column>
+ 
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+            
+      
+            
+            
+            
+            
+            
+            <h:form id="formCadLivro" rendered="${usuarioMBean.logado}">            
+                <p:panel header="Cadastre um novo livro para trocar" style="margin-bottom:20px" toggleable="true">
+                    <p:messages id="mensagensCadLivro" showDetail="true" showSummary="true" closable="true"/>
+                    <h:panelGrid columns="3" cellspacing="6">
+                        <h:outputLabel value="Título : *" for="titulo"></h:outputLabel>
+                        <p:inputText id="titulo" value="#{cadastroLivroMBean.titulo}"/>
+                        <h:outputLabel/>
+                        
+                        <h:outputLabel value="Autor : *" for="autor"></h:outputLabel>
+                        <p:inputText id="autor" value="#{cadastroLivroMBean.autor}"/>
+                        <h:outputLabel/>
+                        
+                        <h:outputLabel value="Sinopse : " for="sinopse"></h:outputLabel>
+                        <p:inputTextarea id="sinopse" value="#{cadastroLivroMBean.sinopse}" counter="display" maxlength="200" counterTemplate="{0} caracteres restantes."/>
+                        <h:outputLabel id="display" style="font-size: 10px" />
+                        
+                        
+                        <p:commandButton id="btn_reset" value="Cancelar" type="reset"/>
+                        <p:commandButton id="btn_add" value="Adicionar" update=":livrosUsuario :formLivrosParaTroca:tabela mensagensCadLivro" action="#{cadastroLivroMBean.cadastrar}" />
+                        
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+            
+            <h:form id="livrosUsuario" rendered="${usuarioMBean.logado}">
+                <p:panel header="Seus livros cadastrados" style="margin-bottom:20px" toggleable="true">
+                    <p:dataTable value="#{livroMBean.listaLivrosUsuario}" var="livro" id="tabelaLivrosUser">
+ 
+                        <p:column headerText="Título" filterBy="#{livro.titulo}" filterMatchMode="contains">
+                            <h:outputText value="#{livro.titulo}" />
+                        </p:column>
+ 
+                        <p:column headerText="Autor" filterBy="#{livro.autor}" filterMatchMode="contains">
+                            <h:outputText value="#{livro.autor}" />
+                        </p:column>
+                        
+                        <p:column headerText="Sinopse">
+                            <h:outputText value="#{livro.sinopse}" />
+                        </p:column>
+                        
+                        <p:column style="text-align: center">
+                            <p:commandButton icon="ui-icon-trash" title="Remover livro" actionListener="#{livroMBean.remover(livro)}" update="tabelaLivrosUser :formLivrosParaTroca" />
+                        </p:column>
+ 
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+                    
+        <p:separator />
+ 
+            <h:form id="formLivrosParaTroca">
+                <p:panel header="Livros disponíveis para troca" style="margin-bottom:20px" toggleable="true">
+                    <p:dataTable id="tabela" var="livro" value="#{livroMBean.listaLivros}" widgetVar="tabelaLivros" emptyMessage="Nenhum livro encontrado.">                    
+                        
+                        <p:column headerText="Id">
+                            <h:outputText value="#{livro.id}" />
+                        </p:column>
+                        <p:column headerText="Titulo" filterBy="#{livro.titulo}" filterMatchMode="contains">
+                            <h:outputText value="#{livro.titulo}" />
+                        </p:column>
+                        
+                        <p:column headerText="Autor" filterBy="#{livro.autor}" filterMatchMode="contains">
+                            <h:outputText value="#{livro.autor}" />
+                        </p:column>
+                        
+                        <p:column headerText="Sinopse">
+                            <h:outputText value="#{livro.sinopse}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Usuário" filterBy="#{livro.usuario.nome}" filterMatchMode="contains">
+                            <h:outputText value="#{livro.usuario.nome}" />
+                        </p:column>
+                        
+                        <p:column style="text-align: center">
+                            <p:commandButton icon="ui-icon-mail-closed" title="Enviar Mensagem" />
+                        </p:column>
+                        
+                    </p:dataTable>
+                </p:panel>
             </h:form>
         </f:view>
         
