@@ -9,12 +9,14 @@ import ejb.Livro;
 import ejb.LivroFachada;
 import ejb.Usuario;
 import java.io.Serializable;
+import java.util.Iterator;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -76,6 +78,7 @@ public class CadastroLivroMBean implements Serializable {
                 livroFachada.persist(livro);
                 FacesMessage msg = new FacesMessage("Sucesso!", "Livro cadastrado.");
                 context.addMessage(null, msg);
+                RequestContext.getCurrentInstance().execute("fechaCadastroLivro()");
             } catch (Exception e) {
                 FacesMessage msg = new FacesMessage("Erro no cadastro do livro!", e.getMessage());
                 context.addMessage(null, msg);
@@ -106,4 +109,17 @@ public class CadastroLivroMBean implements Serializable {
         autor = null;
         sinopse = null;
     }
+    
+    public void abrirCadastroLivro() {
+        limpar();
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        Iterator<FacesMessage> it = context.getMessages();
+        while ( it.hasNext() ) {
+            it.next();
+            it.remove();
+        }
+        //RequestContext.getCurrentInstance().execute("PF('dlgCadastroLivro').show()");
+    }
+    
 }
