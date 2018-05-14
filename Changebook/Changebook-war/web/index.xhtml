@@ -109,6 +109,12 @@
                     <h:form id="fcaixaMensagens" rendered="${usuarioMBean.logado}">
                         <p:dataTable value="#{mensagemMBean.listaMensagensUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
                             
+                            <p:column headerText="Data/Hora">
+                                <h:outputText value="#{msg.dataHora}">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
+                                </h:outputText>
+                            </p:column>
+                            
                             <p:column headerText="Remetente">
                                 <h:outputText value="#{msg.usuarioRemetente.nome}" />
                             </p:column>
