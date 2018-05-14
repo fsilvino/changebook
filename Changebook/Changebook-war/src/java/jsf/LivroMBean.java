@@ -46,7 +46,7 @@ public class LivroMBean implements Serializable {
     }
     
     public void removerLivro(Livro livro) {
-        livroFachada.remove(livro);
+        livroFachada.remove(livro.getId());
     }
 
 }

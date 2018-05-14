@@ -31,8 +31,10 @@ public class LivroFachada {
         em.persist(livro);
     }
     
-    public void remove(Livro livro) {
-        em.remove(em.find(Livro.class, livro.getId()));
+    public void remove(int id) {
+        Livro livroBd = em.find(Livro.class, id);
+        mensagemFachada.removeMensagensLivro(livroBd);
+        em.remove(livroBd);
     }
     
     // Metodo que retorna a lista de livros armazenada na tabela Livros
