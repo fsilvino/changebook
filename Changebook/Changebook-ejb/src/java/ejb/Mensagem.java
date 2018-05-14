@@ -6,6 +6,7 @@
 package ejb;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,26 +34,36 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Mensagem.findById", query = "SELECT m FROM Mensagem m WHERE m.id = :id")
     , @NamedQuery(name = "Mensagem.findByTexto", query = "SELECT m FROM Mensagem m WHERE m.texto = :texto")
     , @NamedQuery(name = "Mensagem.findByDestinatario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario")
-    , @NamedQuery(name = "Mensagem.findByUsuario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario or m.usuarioRemetente = :usuario")})
+    , @NamedQuery(name = "Mensagem.findByUsuario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario or m.usuarioRemetente = :usuario ORDER BY m.livro, m.dataHora")})
 public class Mensagem implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "DATAHORA")
+    private Date dataHora;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 3000)
     @Column(name = "TEXTO")
     private String texto;
+    
     @JoinColumn(name = "IDLIVRO", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Livro livro;
+    
     @JoinColumn(name = "IDUSUARIO_DESTINATARIO", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Usuario usuarioDestinatario;
+    
     @JoinColumn(name = "IDUSUARIO_REMETENTE", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Usuario usuarioRemetente;
@@ -77,6 +88,14 @@ public class Mensagem implements Serializable {
         this.id = id;
     }
 
+    public Date getDataHora() {
+        return dataHora;
+    }
+
+    public void setDataHora(Date dataHora) {
+        this.dataHora = dataHora;
+    }
+    
     public String getTexto() {
         return texto;
     }

@@ -10,6 +10,7 @@ import ejb.Mensagem;
 import ejb.MensagemFachada;
 import ejb.Usuario;
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -57,6 +58,7 @@ public class CtrlMensagemMBean implements Serializable {
             msg.setUsuarioRemetente(usuarioMBean.getUsuario());
             msg.setTexto(conteudo);
             msg.setLivro(livro);
+            msg.setDataHora(Calendar.getInstance().getTime());
             
             try {
                 mensagemFachada.persist(msg);
