@@ -11,16 +11,16 @@
     </h:head>
     <h:body>
         
-        <f:view>
+        <f:view id="vwPrincipal">
             <h1><h:outputText value="CHANGEBOOK"/></h1>
-            <h:form>
+            <h:form id="fmStatusLogin">
                 <table>
                     <tr>
                         <td>
                             <p:fragment autoUpdate="true" id="fragmentLoginStatus">
                                 <c:choose>
                                     <c:when test="${usuarioMBean.logado}">
-                                        <p:commandButton type="button" value="Novo Livro" onclick="PF('dlgCadLivro').show();" />
+                                        <p:commandButton value="Novo Livro" actionListener="#{cadastroLivroMBean.abrirCadastroLivro}" oncomplete="PF('dlgCadastroLivro').show();" update=":dlgCadastroLivro" />
                                         Olá 
                                         <b>
                                             <p:outputLabel value="#{usuarioMBean.usuario.nome} " />
@@ -48,7 +48,7 @@
                         <p:outputLabel for="senha" value="Senha : " />
                         <p:password id="senha" value="#{loginMBean.senha}" required="true" />
                     </p:panelGrid>
-                    <p:commandButton value="Login" actionListener="#{loginMBean.login}" update="messagesLogin" />
+                    <p:commandButton value="Login" actionListener="#{loginMBean.login}" update="messagesLogin :tbView :fmStatusLogin :dlgCadastroLivro" />
                 </h:form>
             </p:dialog>
             
@@ -73,116 +73,108 @@
                 </h:form>
             </p:dialog>
             
-            <h:form id="fcaixaMensagens" rendered="${usuarioMBean.logado}">
-                <p:panel header="Caixa de mensagens" style="margin-bottom:20px" toggleable="true">
-                    <p:dataTable value="#{MensagensMBean.listaMensagensUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
- 
-                        <p:column headerText="Remetente">
-                            <h:outputText value="#{msg.remetente.nome}" />
-                        </p:column>
- 
-                        <p:column headerText="Conteúdo">
-                            <h:outputText value="#{msg.texto}" />
-                        </p:column>
-                        
-                        <p:column headerText="Livro">
-                            <h:outputText value="#{msg.livro.id}" />
-                        </p:column>
-                        
-                        <p:column style="text-align: center">
-                            <p:commandButton icon="ui-icon-zoomin" title="Ler Mensagem" />
-                        </p:column>
- 
-                    </p:dataTable>
-                </p:panel>
-            </h:form>
-            
-      
-            
-            
-            
-            
-            
-            <h:form id="formCadLivro" rendered="${usuarioMBean.logado}">            
-                <p:panel header="Cadastre um novo livro para trocar" style="margin-bottom:20px" toggleable="true">
-                    <p:messages id="mensagensCadLivro" showDetail="true" showSummary="true" closable="true"/>
+            <p:tabView id="tbView">
+                <p:tab title="Livros disponíveis para troca">
+                    <h:form id="formLivrosParaTroca">
+                        <p:dataTable id="tabela" var="livro" value="#{livroMBean.listaLivros}" widgetVar="tabelaLivros" emptyMessage="Nenhum livro disponivel para troca.">                    
+
+                            <p:column headerText="Id">
+                                <h:outputText value="#{livro.id}" />
+                            </p:column>
+                            <p:column headerText="Titulo" filterBy="#{livro.titulo}" filterMatchMode="contains">
+                                <h:outputText value="#{livro.titulo}" />
+                            </p:column>
+
+                            <p:column headerText="Autor" filterBy="#{livro.autor}" filterMatchMode="contains">
+                                <h:outputText value="#{livro.autor}" />
+                            </p:column>
+
+                            <p:column headerText="Sinopse">
+                                <h:outputText value="#{livro.sinopse}"/>
+                            </p:column>
+
+                            <p:column headerText="Usuário" filterBy="#{livro.usuario.nome}" filterMatchMode="contains">
+                                <h:outputText value="#{livro.usuario.nome}" />
+                            </p:column>
+
+                            <p:column style="text-align: center">
+                                <p:commandButton icon="ui-icon-mail-closed" title="Enviar Mensagem" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Mensagens">
+                    <h:outputText value="Faça login para ver suas mensagens" rendered="${!usuarioMBean.logado}" />
+                    <h:form id="fcaixaMensagens" rendered="${usuarioMBean.logado}">
+                        <p:dataTable value="#{MensagensMBean.listaMensagensUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
+
+                            <p:column headerText="Remetente">
+                                <h:outputText value="#{msg.remetente.nome}" />
+                            </p:column>
+
+                            <p:column headerText="Conteúdo">
+                                <h:outputText value="#{msg.texto}" />
+                            </p:column>
+
+                            <p:column headerText="Livro">
+                                <h:outputText value="#{msg.livro.id}" />
+                            </p:column>
+
+                            <p:column style="text-align: center">
+                                <p:commandButton icon="ui-icon-zoomin" title="Ler Mensagem" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Meus Livros">
+                    <h:outputText value="Faça login para ver seus livros" rendered="${!usuarioMBean.logado}" />
+                    <h:form id="livrosUsuario" rendered="${usuarioMBean.logado}">
+                        <p:dataTable value="#{livroMBean.listaLivrosUsuario}" var="livro" id="tabelaLivrosUser" emptyMessage="Nenhum livro cadastrado">
+
+                            <p:column headerText="Título" filterBy="#{livro.titulo}" filterMatchMode="contains">
+                                <h:outputText value="#{livro.titulo}" />
+                            </p:column>
+
+                            <p:column headerText="Autor" filterBy="#{livro.autor}" filterMatchMode="contains">
+                                <h:outputText value="#{livro.autor}" />
+                            </p:column>
+
+                            <p:column headerText="Sinopse">
+                                <h:outputText value="#{livro.sinopse}" />
+                            </p:column>
+
+                            <p:column style="text-align: center">
+                                <p:commandButton icon="ui-icon-trash" title="Remover livro" actionListener="#{livroMBean.remover(livro)}" update="tabelaLivrosUser :tbView:formLivrosParaTroca" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+                    
+            <p:dialog header="Cadastre um novo livro para trocar" modal="true" id="dlgCadastroLivro" widgetVar="dlgCadastroLivro">
+                <h:form id="formCadLivro" rendered="${usuarioMBean.logado}">            
+                    <p:messages  id="mensagensCadLivro" showDetail="true" showSummary="true" closable="true" autoUpdate="true" />
                     <h:panelGrid columns="3" cellspacing="6">
                         <h:outputLabel value="Título : *" for="titulo"></h:outputLabel>
                         <p:inputText id="titulo" value="#{cadastroLivroMBean.titulo}"/>
                         <h:outputLabel/>
-                        
+
                         <h:outputLabel value="Autor : *" for="autor"></h:outputLabel>
                         <p:inputText id="autor" value="#{cadastroLivroMBean.autor}"/>
                         <h:outputLabel/>
-                        
+
                         <h:outputLabel value="Sinopse : " for="sinopse"></h:outputLabel>
                         <p:inputTextarea id="sinopse" value="#{cadastroLivroMBean.sinopse}" counter="display" maxlength="200" counterTemplate="{0} caracteres restantes."/>
                         <h:outputLabel id="display" style="font-size: 10px" />
-                        
-                        
-                        <p:commandButton id="btn_reset" value="Cancelar" type="reset"/>
-                        <p:commandButton id="btn_add" value="Adicionar" update=":livrosUsuario :formLivrosParaTroca:tabela mensagensCadLivro" action="#{cadastroLivroMBean.cadastrar}" />
-                        
+
+                        <p:commandButton id="btn_add" value="Adicionar" update=":tbView:livrosUsuario :tbView:formLivrosParaTroca:tabela mensagensCadLivro" action="#{cadastroLivroMBean.cadastrar}" />
+                        <p:commandButton id="btn_reset" value="Cancelar" type="reset" onclick="PF('dlgCadastroLivro').hide();" />
                     </h:panelGrid>
-                </p:panel>
-            </h:form>
-            
-            <h:form id="livrosUsuario" rendered="${usuarioMBean.logado}">
-                <p:panel header="Seus livros cadastrados" style="margin-bottom:20px" toggleable="true">
-                    <p:dataTable value="#{livroMBean.listaLivrosUsuario}" var="livro" id="tabelaLivrosUser">
- 
-                        <p:column headerText="Título" filterBy="#{livro.titulo}" filterMatchMode="contains">
-                            <h:outputText value="#{livro.titulo}" />
-                        </p:column>
- 
-                        <p:column headerText="Autor" filterBy="#{livro.autor}" filterMatchMode="contains">
-                            <h:outputText value="#{livro.autor}" />
-                        </p:column>
-                        
-                        <p:column headerText="Sinopse">
-                            <h:outputText value="#{livro.sinopse}" />
-                        </p:column>
-                        
-                        <p:column style="text-align: center">
-                            <p:commandButton icon="ui-icon-trash" title="Remover livro" actionListener="#{livroMBean.remover(livro)}" update="tabelaLivrosUser :formLivrosParaTroca" />
-                        </p:column>
- 
-                    </p:dataTable>
-                </p:panel>
-            </h:form>
-                    
-        <p:separator />
- 
-            <h:form id="formLivrosParaTroca">
-                <p:panel header="Livros disponíveis para troca" style="margin-bottom:20px" toggleable="true">
-                    <p:dataTable id="tabela" var="livro" value="#{livroMBean.listaLivros}" widgetVar="tabelaLivros" emptyMessage="Nenhum livro encontrado.">                    
-                        
-                        <p:column headerText="Id">
-                            <h:outputText value="#{livro.id}" />
-                        </p:column>
-                        <p:column headerText="Titulo" filterBy="#{livro.titulo}" filterMatchMode="contains">
-                            <h:outputText value="#{livro.titulo}" />
-                        </p:column>
-                        
-                        <p:column headerText="Autor" filterBy="#{livro.autor}" filterMatchMode="contains">
-                            <h:outputText value="#{livro.autor}" />
-                        </p:column>
-                        
-                        <p:column headerText="Sinopse">
-                            <h:outputText value="#{livro.sinopse}"/>
-                        </p:column>
-                        
-                        <p:column headerText="Usuário" filterBy="#{livro.usuario.nome}" filterMatchMode="contains">
-                            <h:outputText value="#{livro.usuario.nome}" />
-                        </p:column>
-                        
-                        <p:column style="text-align: center">
-                            <p:commandButton icon="ui-icon-mail-closed" title="Enviar Mensagem" />
-                        </p:column>
-                        
-                    </p:dataTable>
-                </p:panel>
-            </h:form>
+                </h:form>
+            </p:dialog>
         </f:view>
         
         <script type="text/javascript">
@@ -191,6 +183,11 @@
                 setTimeout(function () {
                     window.location.reload();
                 }, 2000);
+            }
+            
+            function fechaCadastroLivro() {
+                document.getElementById('formCadLivro').reset();
+                PF('dlgCadastroLivro').hide();
             }
         </script>
         

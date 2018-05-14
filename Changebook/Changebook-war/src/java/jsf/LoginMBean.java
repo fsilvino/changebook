@@ -74,7 +74,7 @@ public class LoginMBean implements Serializable {
         }
         
         usuarioMBean.setUsuario(user);
-        RequestContext.getCurrentInstance().execute("window.location.reload()");
+        RequestContext.getCurrentInstance().execute("PF('dlgLogin').hide()");
         
         return true;
     }
