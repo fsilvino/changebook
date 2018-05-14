@@ -7,6 +7,7 @@ package jsf;
 
 import ejb.Livro;
 import ejb.MensagemFachada;
+import ejb.Usuario;
 import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -27,10 +28,12 @@ public class CtrlMensagemMBean implements Serializable {
     private MensagemFachada mensagemFachada;
     
     //@ManagedProperty(value = "usuarioMBean")
-    @Inject private UsuarioMBean usuarioMBean;
+    //@Inject private UsuarioMBean usuarioMBean;
     
     private Livro livro;
     private String conteudo;
+    private Usuario usuarioRemetente;
+    private Usuario usuarioDestinatario;
 
     public CtrlMensagemMBean() {
     }
@@ -50,7 +53,7 @@ public class CtrlMensagemMBean implements Serializable {
     public void enviarMensagem() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
-            mensagemFachada.incluir(usuarioMBean.getUsuario(), conteudo, livro);
+            mensagemFachada.incluir(usuarioRemetente, usuarioDestinatario, conteudo, livro);
             FacesMessage msgf = new FacesMessage("Sucesso!", "Mensagem enviada.");
             context.addMessage(null, msgf);
             RequestContext.getCurrentInstance().execute("fechaCadastroMensagem()");
@@ -60,8 +63,10 @@ public class CtrlMensagemMBean implements Serializable {
         }
     }
     
-    public void novaMensagem(Livro livro) {
+    public void novaMensagem(Livro livro, Usuario usuarioRemetente, Usuario usuarioDestinatario) {
         this.livro = livro;
+        this.usuarioRemetente = usuarioRemetente;
+        this.usuarioDestinatario = usuarioDestinatario;
         this.conteudo = "";
     }
     

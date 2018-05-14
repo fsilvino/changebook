@@ -104,7 +104,7 @@
                             </p:column>
 
                             <p:column style="text-align: center">
-                                <p:commandButton icon="ui-icon-mail-closed" title="Enviar Mensagem" actionListener="#{ctrlMensagemMBean.novaMensagem(livro)}" oncomplete="PF('dlgMensagem').show();" update=":fmMensagem" />
+                                <p:commandButton icon="ui-icon-mail-closed" title="Enviar Mensagem" actionListener="#{ctrlMensagemMBean.novaMensagem(livro, usuarioMBean.usuario, livro.usuario)}" oncomplete="PF('dlgMensagem').show();" update=":fmMensagem" />
                             </p:column>
 
                         </p:dataTable>
@@ -113,28 +113,18 @@
                 <p:tab title="Mensagens">
                     <h:outputText value="Faça login para ver suas mensagens" rendered="${!usuarioMBean.logado}" />
                     <h:form id="fcaixaMensagens" rendered="${usuarioMBean.logado}">
-                        <p:dataTable value="#{mensagemMBean.listaMensagensUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
-                            
-                            <p:column headerText="Data/Hora">
-                                <h:outputText value="#{msg.dataHora}">
-                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
-                                </h:outputText>
-                            </p:column>
+                        <p:dataTable value="#{mensagemMBean.listaContatosPorLivroDoUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
                             
                             <p:column headerText="Remetente">
                                 <h:outputText value="#{msg.usuarioRemetente.nome}" />
                             </p:column>
                             
-                            <p:column headerText="Destinatário">
-                                <h:outputText value="#{msg.usuarioDestinatario.nome}" />
-                            </p:column>
-                            
                             <p:column headerText="Livro">
                                 <h:outputText value="#{msg.livro.titulo}" />
                             </p:column>
-
-                            <p:column headerText="Mensagem">
-                                <h:outputText value="#{msg.texto}" />
+                            
+                            <p:column headerText="">
+                                <p:commandButton value="Ver conversa" title="Abrir conversa" actionListener="#{mensagemMBean.verConversaLivroUsuarioInteressado(msg.livro, msg.usuarioRemetente)}" update=":dlgMensagensUsuarioInteressado" oncomplete="PF('dlgMensagensUsuarioInteressado').show()" />
                             </p:column>
 
                         </p:dataTable>
@@ -187,6 +177,43 @@
                     </h:panelGrid>
                 </h:form>
             </p:dialog>
+            
+            <p:dialog header="Mensagens usuário interessado" modal="true" id="dlgMensagensUsuarioInteressado" widgetVar="dlgMensagensUsuarioInteressado">
+                <h:form id="fmMensagensUsuarioInteressado">
+                    <b><p:outputLabel value="Usuário Interessado:" /></b>
+                    <br />
+                    <h:outputText value="#{mensagemMBean.usuarioInteressado.nome}" />
+                    <br />
+                    <br />
+                    <b><p:outputLabel value="Livro de Interesse:" /></b>
+                    <br />
+                    <h:outputText value="#{mensagemMBean.livroVerMensagens.titulo}" />
+                    <br />
+                    <br />
+                    
+                    <p:dataTable value="#{mensagemMBean.listaMensagensLivroEUsuarioInteressado}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
+                            
+                        <p:column headerText="Data/Hora">
+                            <h:outputText value="#{msg.dataHora}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Remetente">
+                            <h:outputText value="#{msg.usuarioRemetente.nome}" />
+                        </p:column>
+
+                        <p:column headerText="Mensagem">
+                            <h:outputText value="#{msg.texto}" />
+                        </p:column>
+
+                    </p:dataTable>
+                    <br />
+                    <p:commandButton value="Nova mensagem" actionListener="#{ctrlMensagemMBean.novaMensagem(mensagemMBean.livroVerMensagens, usuarioMBean.usuario, mensagemMBean.usuarioInteressado)}" oncomplete="PF('dlgMensagem').show();" update=":fmMensagem" />
+                    <p:commandButton value="Fechar" onclick="PF('dlgMensagensUsuarioInteressado').hide();" />
+                </h:form>
+            </p:dialog>
+                
             
             <p:dialog header="Enviar mensagem" modal="true" id="dlgMensagem" widgetVar="dlgMensagem">
                 <h:form id="fmMensagem">

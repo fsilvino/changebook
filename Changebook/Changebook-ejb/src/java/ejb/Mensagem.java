@@ -34,7 +34,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Mensagem.findById", query = "SELECT m FROM Mensagem m WHERE m.id = :id")
     , @NamedQuery(name = "Mensagem.findByTexto", query = "SELECT m FROM Mensagem m WHERE m.texto = :texto")
     , @NamedQuery(name = "Mensagem.findByDestinatario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario")
-    , @NamedQuery(name = "Mensagem.findByUsuario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario or m.usuarioRemetente = :usuario ORDER BY m.livro, m.dataHora")})
+    , @NamedQuery(name = "Mensagem.findByUsuario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario or m.usuarioRemetente = :usuario ORDER BY m.livro, m.usuarioRemetente, m.dataHora")
+    , @NamedQuery(name = "Mensagem.findByUsuarioELivro", query = "SELECT m FROM Mensagem m " +
+                                                                 "WHERE ((m.usuarioDestinatario = :usuarioLogado and m.usuarioRemetente = :usuarioInteressado) " +
+                                                                 " or (m.usuarioDestinatario = :usuarioInteressado and m.usuarioRemetente = :usuarioLogado)) " +
+                                                                 " and m.livro = :livro " +
+                                                                 "ORDER BY m.livro, m.dataHora")
+})
 public class Mensagem implements Serializable {
 
     private static final long serialVersionUID = 1L;
