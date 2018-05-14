@@ -70,7 +70,7 @@ public class Livro implements Serializable {
     @ManyToOne(optional = false)
     private Usuario usuario;
     
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "livro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "livro")
     private List<Mensagem> mensagemList;
 
     public Livro() {

@@ -8,6 +8,7 @@ package ejb;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -23,12 +24,15 @@ public class LivroFachada {
     @PersistenceContext(unitName = "Changebook-ejbPU")
     private EntityManager em;
     
+    @Inject
+    private MensagemFachada mensagemFachada;
+    
     public void persist(Livro livro) {
         em.persist(livro);
     }
     
     public void remove(Livro livro) {
-        em.remove(livro);
+        em.remove(em.find(Livro.class, livro.getId()));
     }
     
     // Metodo que retorna a lista de livros armazenada na tabela Livros

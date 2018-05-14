@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Mensagem.findAll", query = "SELECT m FROM Mensagem m")
     , @NamedQuery(name = "Mensagem.findById", query = "SELECT m FROM Mensagem m WHERE m.id = :id")
     , @NamedQuery(name = "Mensagem.findByTexto", query = "SELECT m FROM Mensagem m WHERE m.texto = :texto")
-    , @NamedQuery(name = "Mensagem.findByDestinatario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario")})
+    , @NamedQuery(name = "Mensagem.findByDestinatario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario")
+    , @NamedQuery(name = "Mensagem.findByUsuario", query = "SELECT m FROM Mensagem m WHERE m.usuarioDestinatario = :usuario or m.usuarioRemetente = :usuario")})
 public class Mensagem implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -16,12 +16,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.context.RequestContext;
 
 /**
  *
  * @author diogo
  */
-@Named(value = "crtlMensagemMBean")
+@Named(value = "ctrlMensagemMBean")
 @ViewScoped
 public class CtrlMensagemMBean implements Serializable {
     @EJB
@@ -30,19 +31,14 @@ public class CtrlMensagemMBean implements Serializable {
     //@ManagedProperty(value = "usuarioMBean")
     @Inject private UsuarioMBean usuarioMBean;
     
-    private Usuario destinatario;
     private Livro livro;
     private String conteudo;
 
     public CtrlMensagemMBean() {
     }
 
-    public Usuario getDestinatario() {
-        return destinatario;
-    }
-
-    public void setDestinatario(Usuario destinatario) {
-        this.destinatario = destinatario;
+    public Livro getLivro() {
+        return livro;
     }
 
     public String getConteudo() {
@@ -57,7 +53,7 @@ public class CtrlMensagemMBean implements Serializable {
         if(validarMensagem()) {
             FacesContext context = FacesContext.getCurrentInstance();
             Mensagem msg = new Mensagem();
-            msg.setUsuarioDestinatario(destinatario);
+            msg.setUsuarioDestinatario(livro.getUsuario());
             msg.setUsuarioRemetente(usuarioMBean.getUsuario());
             msg.setTexto(conteudo);
             msg.setLivro(livro);
@@ -66,6 +62,8 @@ public class CtrlMensagemMBean implements Serializable {
                 mensagemFachada.persist(msg);
                 FacesMessage msgf = new FacesMessage("Sucesso!", "Mensagem enviada.");
                 context.addMessage(null, msgf);
+                
+                RequestContext.getCurrentInstance().execute("fechaCadastroMensagem()");
             } catch (Exception e) {
                 FacesMessage msgf = new FacesMessage("Erro no envio da mensagem!", e.getMessage());
                 context.addMessage(null, msgf);
@@ -90,11 +88,17 @@ public class CtrlMensagemMBean implements Serializable {
             return false;
         }
         
-        if (destinatario == null) {
-            FacesMessage msg = new FacesMessage("Erro!", "Campo destinatário vazio.");
+        if (livro == null) {
+            FacesMessage msg = new FacesMessage("Erro!", "Campo livro vazio.");
             context.addMessage(null,msg);
             return false;
         }
         return true;
     }
+    
+    public void novaMensagem(Livro livro) {
+        this.livro = livro;
+        this.conteudo = "";
+    }
+    
 }
