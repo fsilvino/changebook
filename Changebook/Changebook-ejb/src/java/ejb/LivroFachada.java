@@ -27,8 +27,35 @@ public class LivroFachada {
     @Inject
     private MensagemFachada mensagemFachada;
     
-    public void persist(Livro livro) {
+    private void persist(Livro livro) {
         em.persist(livro);
+    }
+    
+    public void incluir(String autor, String titulo, String sinopse, Usuario usuarioDono) throws Exception {
+        Livro livro = new Livro();
+        livro.setAutor(autor);
+        livro.setTitulo(titulo);
+        livro.setSinopse(sinopse);
+        livro.setUsuario(usuarioDono);
+        
+        validarCadastro(livro);
+        persist(livro);
+    }
+    
+    
+    private void validarCadastro(Livro livro) throws Exception {
+        
+        if (livro.getTitulo() == null || livro.getTitulo().isEmpty()) {
+            throw new Exception("O campo Título é obrigatório!");
+        }
+        
+        if (livro.getAutor() == null || livro.getAutor().isEmpty()) {
+            throw new Exception("O campo Autor é obrigatório!");
+        }
+        
+        if (livro.getUsuario() == null) {
+            throw new Exception("É necessario estar logado para cadastrar um livro!");
+        }
     }
     
     public void remove(int id) {

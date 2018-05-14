@@ -7,12 +7,10 @@ package jsf;
 
 import ejb.Livro;
 import ejb.LivroFachada;
-import ejb.Usuario;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 
