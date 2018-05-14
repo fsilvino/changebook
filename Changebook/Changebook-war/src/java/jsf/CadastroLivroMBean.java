@@ -5,9 +5,7 @@
  */
 package jsf;
 
-import ejb.Livro;
 import ejb.LivroFachada;
-import ejb.Usuario;
 import java.io.Serializable;
 import java.util.Iterator;
 import javax.ejb.EJB;
@@ -64,45 +62,20 @@ public class CadastroLivroMBean implements Serializable {
     }
     
     public void cadastrar() {
-    
-        if (validarCadastro()) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            
-            Livro livro = new Livro();
-            livro.setAutor(autor);
-            livro.setTitulo(titulo);
-            livro.setSinopse(sinopse);
-            livro.setUsuario(usuarioMBean.getUsuario());
-            
-            try {
-                livroFachada.persist(livro);
-                FacesMessage msg = new FacesMessage("Sucesso!", "Livro cadastrado.");
-                context.addMessage(null, msg);
-                RequestContext.getCurrentInstance().execute("fechaCadastroLivro()");
-            } catch (Exception e) {
-                FacesMessage msg = new FacesMessage("Erro no cadastro do livro!", e.getMessage());
-                context.addMessage(null, msg);
-            }            
-        }
-      
-    }
-    
-    private boolean validarCadastro() {
+        
         FacesContext context = FacesContext.getCurrentInstance();
-        
-        if (titulo == null || titulo.isEmpty()) {
-            FacesMessage msg = new FacesMessage("Erro!", "O campo Título é obrigatório!");
-            context.addMessage(null,msg);
-            return false;
-        }
-        
-        if (autor == null || autor.isEmpty()) {
-            FacesMessage msg = new FacesMessage("Erro!", "O campo Autor é obrigatório!");
-            context.addMessage(null,msg);
-            return false;
-        }        
-        return true;
+        try {
+            livroFachada.incluir(autor, titulo, sinopse, usuarioMBean.getUsuario());
+            FacesMessage msg = new FacesMessage("Sucesso!", "Livro cadastrado.");
+            context.addMessage(null, msg);
+            RequestContext.getCurrentInstance().execute("fechaCadastroLivro()");
+        } catch (Exception e) {
+            FacesMessage msg = new FacesMessage("Erro!", e.getMessage());
+            context.addMessage(null, msg);
+        }            
     }
+    
+
     
     public void limpar() {
         titulo = null;
@@ -110,16 +83,18 @@ public class CadastroLivroMBean implements Serializable {
         sinopse = null;
     }
     
-    public void abrirCadastroLivro() {
-        limpar();
-        
+    private void limparMensagens() {
         FacesContext context = FacesContext.getCurrentInstance();
         Iterator<FacesMessage> it = context.getMessages();
         while ( it.hasNext() ) {
             it.next();
             it.remove();
         }
-        //RequestContext.getCurrentInstance().execute("PF('dlgCadastroLivro').show()");
+    }
+    
+    public void abrirCadastroNovoLivro() {
+        limpar();
+        limparMensagens();
     }
     
 }

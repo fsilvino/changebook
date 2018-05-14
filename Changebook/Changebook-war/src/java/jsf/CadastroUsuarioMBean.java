@@ -5,7 +5,6 @@
  */
 package jsf;
 
-import ejb.Usuario;
 import ejb.UsuarioFachada;
 import java.io.Serializable;
 import javax.ejb.EJB;
@@ -83,22 +82,12 @@ public class CadastroUsuarioMBean implements Serializable {
         if (!messageList.isEmpty()) { 
             messageList.clear();
         }
-        if (!validarCadastro()) {
-            return false;
-        }
-        
-        Usuario usuario = new Usuario();
-        usuario.setNome(nome);
-        usuario.setTelefone(telefone);
-        usuario.setEmail(email);
-        usuario.setSenha(senha);
+   
         try {
-            usuarioFachada.persist(usuario);
-            usuarioMBean.setUsuario(usuario);
+            usuarioFachada.incluir(nome, telefone, email, senha);
+            usuarioMBean.setUsuario(usuarioFachada.getUsuarioByEmail(email));
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Cadastro realizado com sucesso!"));
-            
             RequestContext.getCurrentInstance().execute("zeraEFechaCadastroUsuario()");
-            
             return true;
         } catch (Exception e) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", e.getMessage()));
@@ -106,35 +95,4 @@ public class CadastroUsuarioMBean implements Serializable {
         }
         
     }
-    
-    private boolean validarCadastro() {
-        boolean valido = true;
-        
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (nome == null || nome.isEmpty()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "O campo Nome é obrigatório!"));
-            return false;
-        }
-        
-        if (telefone == null || telefone.isEmpty()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "O campo Telefone é obrigatório!"));
-            valido = false;
-        }
-        
-        if (email == null || email.isEmpty()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "O campo E-mail é obrigatório!"));
-            valido = false;
-        } else if (usuarioFachada.getUsuarioByEmail(email) != null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "Já existe um usuário cadastrado com o e-mail informado!"));
-            valido = false;
-        }
-        
-        if (senha == null || senha.isEmpty()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "O campo Senha é obrigatório!"));
-            valido = false;
-        }
-        
-        return valido;
-    }
-    
 }

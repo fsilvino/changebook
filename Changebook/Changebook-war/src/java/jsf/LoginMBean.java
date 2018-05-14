@@ -5,13 +5,10 @@
  */
 package jsf;
 
-import ejb.Usuario;
 import ejb.UsuarioFachada;
 import java.io.Serializable;
 import javax.ejb.EJB;
-import javax.faces.FacesException;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -60,21 +57,19 @@ public class LoginMBean implements Serializable {
     
     public boolean login() {
         FacesContext context = FacesContext.getCurrentInstance();
-        
-        Usuario user = usuarioFachada.getUsuarioByEmail(email);
-        
-        if (user == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "E-mail não cadastrado!"));
+        if (email.trim() == null || email.isEmpty() || senha.trim() == null || senha.isEmpty()) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro:","Por favor, preencha os campos obrigatórios");
+            context.addMessage(null, msg);
             return false;
         }
-        
-        if (!user.getSenha().equals(senha)) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!", "Senha incorreta!"));
-            return false;
+        try {
+            usuarioFachada.validarLogin(email, senha);
+            usuarioMBean.setUsuario(usuarioFachada.getUsuarioByEmail(email));
+            RequestContext.getCurrentInstance().execute("PF('dlgLogin').hide()");
+        } catch (Exception ex) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro:", ex.getMessage());
+            context.addMessage(null, msg);
         }
-        
-        usuarioMBean.setUsuario(user);
-        RequestContext.getCurrentInstance().execute("PF('dlgLogin').hide()");
         
         return true;
     }

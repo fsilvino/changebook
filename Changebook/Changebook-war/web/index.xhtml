@@ -20,7 +20,7 @@
                             <p:fragment autoUpdate="true" id="fragmentLoginStatus">
                                 <c:choose>
                                     <c:when test="${usuarioMBean.logado}">
-                                        <p:commandButton value="Novo Livro" actionListener="#{cadastroLivroMBean.abrirCadastroLivro}" oncomplete="PF('dlgCadastroLivro').show();" update=":dlgCadastroLivro" />
+                                        <p:commandButton value="Novo Livro" actionListener="#{cadastroLivroMBean.abrirCadastroNovoLivro}" oncomplete="PF('dlgCadastroLivro').show();" update=":dlgCadastroLivro" />
                                         Olá 
                                         <b>
                                             <p:outputLabel value="#{usuarioMBean.usuario.nome} " />
@@ -41,14 +41,18 @@
             <p:dialog header="Login" modal="true" widgetVar="dlgLogin">
                 <h:form>
                     <p:messages id="messagesLogin" showDetail="true" class="loginUpdate" />
-                    <p:panelGrid columns="2">
-                        <p:outputLabel for="email" value="E-mail : " />
-                        <p:inputText id="email" value="#{loginMBean.email}" required="true" />
+                    <h:panelGrid columns="2" cellpadding="6">
+                        <p:outputLabel for="email" value="E-mail : *" />
+                        <p:inputText id="email" value="#{loginMBean.email}" />
 
-                        <p:outputLabel for="senha" value="Senha : " />
-                        <p:password id="senha" value="#{loginMBean.senha}" required="true" />
-                    </p:panelGrid>
-                    <p:commandButton value="Login" actionListener="#{loginMBean.login}" update="messagesLogin :tbView :fmStatusLogin :dlgCadastroLivro" />
+                        <p:outputLabel for="senha" value="Senha : *" />
+                        <p:password id="senha" value="#{loginMBean.senha}" />
+                        
+                        <p:commandButton value="Login" actionListener="#{loginMBean.login}" update="messagesLogin :tbView :fmStatusLogin :dlgCadastroLivro" />
+                        <p:commandButton value="Cancelar" type="reset" onclick="PF('dlgLogin').hide()" />
+                        
+                    </h:panelGrid>
+                    
                 </h:form>
             </p:dialog>
             
@@ -56,20 +60,22 @@
                 <h:form id="fmCadUser">
                     <p:messages id="messagesCadUser" showDetail="true" />
                     
-                    <p:panelGrid columns="2">
-                        <p:outputLabel for="nome" value="Nome : " />
-                        <p:inputText id="nome" value="#{cadastroUsuarioMBean.nome}" required="true" />
+                    <h:panelGrid columns="2" cellpadding="6">
+                        <p:outputLabel for="nome" value="Nome : *" />
+                        <p:inputText id="nome" value="#{cadastroUsuarioMBean.nome}" />
                         
-                        <p:outputLabel for="telefone" value="Telefone : " />
-                        <p:inputText id="telefone" value="#{cadastroUsuarioMBean.telefone}" required="true" />
+                        <p:outputLabel for="telefone" value="Telefone : *" />
+                        <p:inputText id="telefone" value="#{cadastroUsuarioMBean.telefone}"/>
                         
-                        <p:outputLabel for="email" value="E-mail :" />
-                        <p:inputText id="email" value="#{cadastroUsuarioMBean.email}" required="true"/>
+                        <p:outputLabel for="email" value="E-mail : *" />
+                        <p:inputText id="email" value="#{cadastroUsuarioMBean.email}"/>
                         
-                        <p:outputLabel for="senha" value="Senha :" />
-                        <p:password id="senha" value="#{cadastroUsuarioMBean.senha}" required="true"/>
-                    </p:panelGrid>
-                    <p:commandButton value="Cadastrar" actionListener="#{cadastroUsuarioMBean.cadastrar}" update="messagesCadUser" />
+                        <p:outputLabel for="senha" value="Senha : *" />
+                        <p:password id="senha" value="#{cadastroUsuarioMBean.senha}"/>
+                        
+                        <p:commandButton value="Cadastrar" actionListener="#{cadastroUsuarioMBean.cadastrar}" update="messagesCadUser" />
+                        <p:commandButton value="Cancelar" type="reset" onclick="PF('dlgCadastroUsuario').hide()" />
+                    </h:panelGrid>
                 </h:form>
             </p:dialog>
             
@@ -98,7 +104,7 @@
                             </p:column>
 
                             <p:column style="text-align: center">
-                                <p:commandButton icon="ui-icon-mail-closed" title="Enviar Mensagem" actionListener="#{ctrlMensagemMBean.novaMensagem(livro)}" oncomplete="PF('dlgMensagem').show();" update=":fmMensagem" />
+                                <p:commandButton icon="ui-icon-mail-closed" title="Enviar Mensagem" actionListener="#{ctrlMensagemMBean.novaMensagem(livro, usuarioMBean.usuario, livro.usuario)}" oncomplete="PF('dlgMensagem').show();" update=":fmMensagem" />
                             </p:column>
 
                         </p:dataTable>
@@ -107,28 +113,18 @@
                 <p:tab title="Mensagens">
                     <h:outputText value="Faça login para ver suas mensagens" rendered="${!usuarioMBean.logado}" />
                     <h:form id="fcaixaMensagens" rendered="${usuarioMBean.logado}">
-                        <p:dataTable value="#{mensagemMBean.listaMensagensUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
-                            
-                            <p:column headerText="Data/Hora">
-                                <h:outputText value="#{msg.dataHora}">
-                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
-                                </h:outputText>
-                            </p:column>
+                        <p:dataTable value="#{mensagemMBean.listaContatosPorLivroDoUsuario}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
                             
                             <p:column headerText="Remetente">
                                 <h:outputText value="#{msg.usuarioRemetente.nome}" />
                             </p:column>
                             
-                            <p:column headerText="Destinatário">
-                                <h:outputText value="#{msg.usuarioDestinatario.nome}" />
-                            </p:column>
-                            
                             <p:column headerText="Livro">
                                 <h:outputText value="#{msg.livro.titulo}" />
                             </p:column>
-
-                            <p:column headerText="Mensagem">
-                                <h:outputText value="#{msg.texto}" />
+                            
+                            <p:column headerText="">
+                                <p:commandButton value="Ver conversa" title="Abrir conversa" actionListener="#{mensagemMBean.verConversaLivroUsuarioInteressado(msg.livro, msg.usuarioRemetente)}" update=":dlgMensagensUsuarioInteressado" oncomplete="PF('dlgMensagensUsuarioInteressado').show()" />
                             </p:column>
 
                         </p:dataTable>
@@ -163,7 +159,7 @@
             <p:dialog header="Cadastre um novo livro para trocar" modal="true" id="dlgCadastroLivro" widgetVar="dlgCadastroLivro">
                 <h:form id="formCadLivro" rendered="${usuarioMBean.logado}">            
                     <p:messages  id="mensagensCadLivro" showDetail="true" showSummary="true" closable="true" autoUpdate="true" />
-                    <h:panelGrid columns="3" cellspacing="6">
+                    <h:panelGrid columns="3" cellpadding="6">
                         <h:outputLabel value="Título : *" for="titulo"></h:outputLabel>
                         <p:inputText id="titulo" value="#{cadastroLivroMBean.titulo}"/>
                         <h:outputLabel/>
@@ -176,30 +172,67 @@
                         <p:inputTextarea id="sinopse" value="#{cadastroLivroMBean.sinopse}" counter="display" maxlength="200" counterTemplate="{0} caracteres restantes."/>
                         <h:outputLabel id="display" style="font-size: 10px" />
 
-                        <p:commandButton id="btn_add" value="Adicionar" update=":tbView:livrosUsuario :tbView:formLivrosParaTroca:tabela mensagensCadLivro" action="#{cadastroLivroMBean.cadastrar}" />
-                        <p:commandButton id="btn_reset" value="Cancelar" type="reset" onclick="PF('dlgCadastroLivro').hide();" />
+                        <p:commandButton value="Adicionar" update=":tbView:livrosUsuario :tbView:formLivrosParaTroca:tabela mensagensCadLivro" action="#{cadastroLivroMBean.cadastrar}" />
+                        <p:commandButton value="Cancelar" type="reset" onclick="PF('dlgCadastroLivro').hide();" />
                     </h:panelGrid>
                 </h:form>
             </p:dialog>
             
+            <p:dialog header="Mensagens usuário interessado" modal="true" id="dlgMensagensUsuarioInteressado" widgetVar="dlgMensagensUsuarioInteressado">
+                <h:form id="fmMensagensUsuarioInteressado">
+                    <b><p:outputLabel value="Usuário Interessado:" /></b>
+                    <br />
+                    <h:outputText value="#{mensagemMBean.usuarioInteressado.nome}" />
+                    <br />
+                    <br />
+                    <b><p:outputLabel value="Livro de Interesse:" /></b>
+                    <br />
+                    <h:outputText value="#{mensagemMBean.livroVerMensagens.titulo}" />
+                    <br />
+                    <br />
+                    
+                    <p:dataTable value="#{mensagemMBean.listaMensagensLivroEUsuarioInteressado}" var="msg" id="tbMsgs" emptyMessage="Nenhuma mensagem.">
+                            
+                        <p:column headerText="Data/Hora">
+                            <h:outputText value="#{msg.dataHora}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Remetente">
+                            <h:outputText value="#{msg.usuarioRemetente.nome}" />
+                        </p:column>
+
+                        <p:column headerText="Mensagem">
+                            <h:outputText value="#{msg.texto}" />
+                        </p:column>
+
+                    </p:dataTable>
+                    <br />
+                    <p:commandButton value="Nova mensagem" actionListener="#{ctrlMensagemMBean.novaMensagem(mensagemMBean.livroVerMensagens, usuarioMBean.usuario, mensagemMBean.usuarioInteressado)}" oncomplete="PF('dlgMensagem').show();" update=":fmMensagem" />
+                    <p:commandButton value="Fechar" onclick="PF('dlgMensagensUsuarioInteressado').hide();" />
+                </h:form>
+            </p:dialog>
+                
+            
             <p:dialog header="Enviar mensagem" modal="true" id="dlgMensagem" widgetVar="dlgMensagem">
                 <h:form id="fmMensagem">
                     <p:messages  id="mensagensEnviaMensagem" showDetail="true" showSummary="true" closable="true" autoUpdate="true" />
-                    <p:panelGrid columns="2">
+                    <h:panelGrid columns="2" cellpadding="6">
                         
-                        <p:outputLabel value="Destinatário:" />
+                        <h:outputLabel value="Destinatário:" />
                         <h:outputText value="#{ctrlMensagemMBean.livro.usuario.nome}" />
                         
-                        <p:outputLabel value="Livro:" />
+                        <h:outputLabel value="Livro:" />
                         <h:outputText value="#{ctrlMensagemMBean.livro.titulo}" />
                         
-                        <p:outputLabel for="conteudo" value="Mensagem" />
+                        <h:outputLabel for="conteudo" value="Mensagem" />
                         <p:inputTextarea id="conteudo" value="#{ctrlMensagemMBean.conteudo}" />
                         
                         <p:commandButton value="Enviar" actionListener="#{ctrlMensagemMBean.enviarMensagem()}" update="mensagensEnviaMensagem" />
                         <p:commandButton value="Cancelar" type="reset" onclick="PF('dlgMensagem').hide()" />
                         
-                    </p:panelGrid>
+                    </h:panelGrid>
                 </h:form>
             </p:dialog>
             

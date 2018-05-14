@@ -6,11 +6,9 @@
 package jsf;
 
 import ejb.Livro;
-import ejb.Mensagem;
 import ejb.MensagemFachada;
 import ejb.Usuario;
 import java.io.Serializable;
-import java.util.Calendar;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -30,10 +28,12 @@ public class CtrlMensagemMBean implements Serializable {
     private MensagemFachada mensagemFachada;
     
     //@ManagedProperty(value = "usuarioMBean")
-    @Inject private UsuarioMBean usuarioMBean;
+    //@Inject private UsuarioMBean usuarioMBean;
     
     private Livro livro;
     private String conteudo;
+    private Usuario usuarioRemetente;
+    private Usuario usuarioDestinatario;
 
     public CtrlMensagemMBean() {
     }
@@ -51,55 +51,22 @@ public class CtrlMensagemMBean implements Serializable {
     }
     
     public void enviarMensagem() {
-        if(validarMensagem()) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            Mensagem msg = new Mensagem();
-            msg.setUsuarioDestinatario(livro.getUsuario());
-            msg.setUsuarioRemetente(usuarioMBean.getUsuario());
-            msg.setTexto(conteudo);
-            msg.setLivro(livro);
-            msg.setDataHora(Calendar.getInstance().getTime());
-            
-            try {
-                mensagemFachada.persist(msg);
-                FacesMessage msgf = new FacesMessage("Sucesso!", "Mensagem enviada.");
-                context.addMessage(null, msgf);
-                
-                RequestContext.getCurrentInstance().execute("fechaCadastroMensagem()");
-            } catch (Exception e) {
-                FacesMessage msgf = new FacesMessage("Erro no envio da mensagem!", e.getMessage());
-                context.addMessage(null, msgf);
-            }
-            
-        }
-    }
-    
-    private boolean validarMensagem() {
-        
         FacesContext context = FacesContext.getCurrentInstance();
-        
-        if (usuarioMBean.getUsuario() == null) {
-            FacesMessage msg = new FacesMessage("Erro!", "Você deve estar logado para enviar uma mensagem.");
-            context.addMessage(null,msg);
-            return false;
+        try {
+            mensagemFachada.incluir(usuarioRemetente, usuarioDestinatario, conteudo, livro);
+            FacesMessage msgf = new FacesMessage("Sucesso!", "Mensagem enviada.");
+            context.addMessage(null, msgf);
+            RequestContext.getCurrentInstance().execute("fechaCadastroMensagem()");
+        } catch (Exception e) {
+            FacesMessage msgf = new FacesMessage("Erro!", e.getMessage());
+            context.addMessage(null, msgf);
         }
-        
-        if (conteudo == null || conteudo.isEmpty()) {
-            FacesMessage msg = new FacesMessage("Erro!", "A mensagem deve conter algum conteúdo.");
-            context.addMessage(null,msg);
-            return false;
-        }
-        
-        if (livro == null) {
-            FacesMessage msg = new FacesMessage("Erro!", "Campo livro vazio.");
-            context.addMessage(null,msg);
-            return false;
-        }
-        return true;
     }
     
-    public void novaMensagem(Livro livro) {
+    public void novaMensagem(Livro livro, Usuario usuarioRemetente, Usuario usuarioDestinatario) {
         this.livro = livro;
+        this.usuarioRemetente = usuarioRemetente;
+        this.usuarioDestinatario = usuarioDestinatario;
         this.conteudo = "";
     }
     
