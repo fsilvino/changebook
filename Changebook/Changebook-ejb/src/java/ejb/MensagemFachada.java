@@ -35,9 +35,20 @@ public class MensagemFachada {
     
     // Metodo que retorna as mensagens em que o usuario @param é destinatario 
     public List<ejb.Mensagem> getListaMensagensUsuario(Usuario usuario) {
-        Query query = em.createNamedQuery("Mensagem.findByDestinatario");
+        Query query = em.createNamedQuery("Mensagem.findByUsuario");
         query.setParameter("usuario", usuario);
         return query.getResultList();
+    }
+
+    public void removeMensagensLivro(Livro livro) {
+        for (Mensagem mensagem : livro.getMensagemList()) {
+            remove(mensagem);
+        }
+    }
+    
+    public void remove(Mensagem mensagem) {
+        em.remove(mensagem);
+        em.flush();
     }
     
 }

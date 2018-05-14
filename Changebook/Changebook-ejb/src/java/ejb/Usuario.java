@@ -73,13 +73,13 @@ public class Usuario implements Serializable {
     @Column(name = "TELEFONE")
     private String telefone;
     
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario")
     private List<Livro> livroList;
     
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuarioDestinatario")
+    @OneToMany(mappedBy = "usuarioDestinatario")
     private List<Mensagem> mensagensComoDestinatario;
     
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "usuarioRemetente")
+    @OneToMany(mappedBy = "usuarioRemetente")
     private List<Mensagem> mensagensComoRemetente;
     
 
